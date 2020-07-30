@@ -1,33 +1,33 @@
 package com.iqoption.manager;
 
 import com.iqoption.domain.AfficheItem;
+import com.iqoption.repository.AfficheRepository;
 
 public class AfficheManager {
 
     static final int DEFAULT_QUANTITY = 10;
-    private AfficheItem[] items = new AfficheItem[0];
+    private AfficheRepository repository;
 
-    public void add(AfficheItem item) {
-        AfficheItem[] tmp = new AfficheItem[items.length + 1];
-
-        System.arraycopy(items,0, tmp, 0, items.length);
-
-        int lastIndex = tmp.length - 1;
-        tmp[lastIndex] = item;
-
-        items = tmp;
+    public AfficheManager(AfficheRepository repository) {
+        this.repository = repository;
     }
 
-//    public AfficheItem[] getAll() {
-//        AfficheItem[] tmp = new AfficheItem[items.length];
-//        for (int i = 0; i < tmp.length; i++) {
-//            int secondCursor = items.length - i - 1;
-//            tmp[i] = items[secondCursor];
-//        }
-//        return tmp;
-//    }
+    public void add(AfficheItem item) {
+        repository.save(item);
+    }
 
-    public AfficheItem[] getLasts() {
+    public AfficheItem[] findAll() {
+        AfficheItem[] items = repository.findAll();
+        AfficheItem[] tmp = new AfficheItem[items.length];
+        for (int i = 0; i < tmp.length; i++) {
+            int secondCursor = items.length - i - 1;
+            tmp[i] = items[secondCursor];
+        }
+        return tmp;
+    }
+
+    public AfficheItem[] findDefault() {
+        AfficheItem[] items = repository.findAll();
         int quantity = Math.min(items.length, DEFAULT_QUANTITY);
         AfficheItem[] tmp = new AfficheItem[quantity];
         int tmpIndex = 0;
@@ -38,7 +38,8 @@ public class AfficheManager {
         return tmp;
     }
 
-    public AfficheItem[] getLasts(int quantity) {
+    public AfficheItem[] findParam(int quantity) {
+        AfficheItem[] items = repository.findAll();
         quantity = Math.min(items.length, quantity);
         AfficheItem[] tmp = new AfficheItem[quantity];
         int tmpIndex = 0;
@@ -49,5 +50,16 @@ public class AfficheManager {
         return tmp;
     }
 
+    public AfficheItem findById(int id) {
+        return repository.findByID(id);
+    }
+
+    public void removeById(int id) {
+        repository.removeById(id);
+    }
+
+    public void removeAll() {
+        repository.removeAll();
+    }
 
 }
